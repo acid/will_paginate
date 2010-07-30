@@ -32,7 +32,8 @@ module WillPaginate
       :params         => nil,
       :renderer       => 'WillPaginate::LinkRenderer',
       :page_links     => true,
-      :container      => true
+      :container      => true,
+      :endless        => false
     }
     mattr_reader :pagination_options
 
@@ -304,7 +305,12 @@ module WillPaginate
         classnames = span_class && span_class.index(' ') && span_class.split(' ', 2).last
         page_link page, text, :rel => rel_value(page), :class => classnames
       else
-        page_span page, text, :class => span_class
+        if @options[:endless]
+          to_page = @collection.previous_page == nil ? total_pages : 1
+          page_link to_page, text, :rel => rel_value(page), :class => classnames
+        else
+          page_span page, text, :class => span_class
+        end
       end
     end
 
